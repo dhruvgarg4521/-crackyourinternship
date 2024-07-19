@@ -1,0 +1,27 @@
+class Solution {
+private:
+string check_LCP(string s1,string s2){
+    int n = min(s1.size(),s2.size());
+    string res = "";
+    for(int i = 0;i<n;i++){
+        if(s1[i] == s2[i]){
+            res += s1[i];
+        } else {
+            break;
+        }
+    }
+    return res;
+}
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        string s = strs[0];
+        for(int i = 1;i<strs.size();i++){
+            if(s[0] == strs[i][0]){
+                s = check_LCP(s,strs[i]);
+            } else {
+                return "";
+            }
+        }
+        return s;
+    }
+};
