@@ -1,0 +1,80 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    unordered_map<TreeNode*, TreeNode*> mpp; // Map to store parent pointers
+
+    // Function to map child nodes to their parent nodes
+    void solve(TreeNode* root) {
+        if (!root) return;
+        if (root->left) {
+            mpp[root->left] = root;
+            solve(root->left);
+        }
+        if (root->right) {
+            mpp[root->right] = root;
+            solve(root->right);
+        }
+    }
+
+    // BFS function to find all nodes at distance k from the target node
+    void BFS(TreeNode* target, int k, vector<int>& result) {
+        queue<TreeNode*> q;
+        q.push(target);
+        unordered_set<int> visited;
+        visited.insert(target->val);
+
+        while (!q.empty() && k > 0) {
+            int size = q.size();
+            for (int i = 0; i < size; ++i) {
+                TreeNode* node = q.front();
+                q.pop();
+
+                // Left child
+                if (node->left && visited.find(node->left->val) == visited.end()) {
+                    q.push(node->left);
+                    visited.insert(node->left->val);
+                }
+
+                // Right child
+                if (node->right && visited.find(node->right->val) == visited.end()) {
+                    q.push(node->right);
+                    visited.insert(node->right->val);
+                }
+
+                // Parent
+                if (mpp.find(node) != mpp.end() && visited.find(mpp[node]->val) == visited.end()) {
+                    q.push(mpp[node]);
+                    visited.insert(mpp[node]->val);
+                }
+            }
+            --k;
+        }
+
+        while (!q.empty()) {
+            TreeNode* temp = q.front();
+            q.pop();
+            result.push_back(temp->val);
+        }
+    }
+
+    // Main function to find all nodes at distance k from target
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        vector<int> result;
+
+        // Create the parent pointers map
+        solve(root);
+
+        // Perform BFS from the target node to find all nodes at distance k
+        BFS(target, k, result);
+
+        return result;
+    }
+};
