@@ -1,0 +1,17 @@
+class Solution {
+private:
+    void inorder(TreeNode* root, int low, int high, int& sum) {
+        if (!root) return;
+        inorder(root->left, low, high, sum);
+        if (root->val >= low && root->val <= high) {
+            sum += root->val;
+        }
+        inorder(root->right, low, high, sum);
+    }
+public:
+    int rangeSumBST(TreeNode* root, int low, int high) {
+        int sum = 0;
+        inorder(root, low, high, sum);
+        return sum;
+    }
+};
