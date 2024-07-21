@@ -1,0 +1,55 @@
+class Solution
+{
+private:
+    void dfs(int i, vector<int>& vis, vector<vector<int>>& adj, stack<int>& st) {
+        vis[i] = 1;
+        for (auto it : adj[i]) {
+            if (!vis[it]) {
+                dfs(it, vis, adj, st);
+            }
+        }
+        st.push(i);
+    }
+    void dfs2(int i, vector<int>& vis, vector<vector<int>>& adjt) {
+        vis[i] = 1;
+        for (auto it : adjt[i]) {
+            if (!vis[it]) {
+                dfs2(it, vis, adjt);
+            }
+        }
+    }
+public:
+    int kosaraju(int V, vector<vector<int>>& adj) {
+        vector<int> vis(V, 0);
+        stack<int> st;
+
+        // Step 1: Perform DFS and store vertices according to their finish times
+        for (int i = 0; i < V; i++) {
+            if (!vis[i]) {
+                dfs(i, vis, adj, st);
+            }
+        }
+
+        // Step 2: Create a transposed graph
+        vector<vector<int>> adjt(V);
+        for (int i = 0; i < V; i++) {
+            vis[i] = 0;
+            for (auto it : adj[i]) {
+                adjt[it].push_back(i);
+            }
+        }
+
+        // Step 3: Perform DFS in the order of decreasing finish times
+        int scc = 0;
+        while (!st.empty()) {
+            int node = st.top();
+            st.pop();
+            if (!vis[node]) {
+                scc++;
+                dfs2(node, vis, adjt);
+            }
+        }
+
+        return scc;
+    }
+};
