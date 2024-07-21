@@ -1,0 +1,33 @@
+class Solution {
+private:
+bool dfs(int i,vector<int> &visited,vector<int> &pathvis,vector<vector<int>> & graph){
+    visited[i] = 1;
+    pathvis[i] = 1;
+    for(auto adjacent : graph[i]){
+        if(!visited[adjacent]){
+            if(dfs(adjacent,visited,pathvis,graph)) return true;
+        } else if(pathvis[adjacent]) return true;
+    }
+    pathvis[i] = 0;
+    return false;
+}
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        int n = graph.size();
+        int m = graph[0].size();
+        vector<int> visited(n,0);
+        vector<int> pathvis(n,0);
+        vector<int> result;
+        for(int i =0;i<n;i++){
+            if(!visited[i]){
+                dfs(i,visited,pathvis,graph);
+            }
+        }
+        for(int i = 0;i<n;i++){
+            if(!pathvis[i]){
+                result.push_back(i);
+            }
+        }
+        return result;
+    }
+};
