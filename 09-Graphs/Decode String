@@ -1,0 +1,32 @@
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<int> counts;
+        stack<string> resultStack;
+        string result = "";
+        int number = 0;
+        
+        for (char ch : s) {
+            if (isdigit(ch)) {
+                number = (number * 10) + (ch - '0');
+            } else if (isalpha(ch)) {
+                result += ch;
+            } else if (ch == '[') {
+                counts.push(number);
+                resultStack.push(result);
+                number = 0;
+                result = "";
+            } else if (ch == ']') {
+                int count = counts.top();
+                counts.pop();
+                string temp = result;
+                result = resultStack.top();
+                resultStack.pop();
+                for (int i = 0; i < count; ++i) {
+                    result += temp;
+                }
+            }
+        }
+        return result;
+    }
+};
