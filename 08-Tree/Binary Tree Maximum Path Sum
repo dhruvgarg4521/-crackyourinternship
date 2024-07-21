@@ -1,0 +1,16 @@
+class Solution {
+public:
+    int currentMax = -1001;
+    int maxPathSum(TreeNode* root) {
+        int value = getMaxSum(root);
+        return currentMax;
+    }
+    int getMaxSum(TreeNode* node) {
+        if (node == nullptr) return 0;
+        int leftSum = getMaxSum(node->left);
+        int rightSum = getMaxSum(node->right);
+        int sum =max({node->val, node->val+leftSum, node->val+rightSum, node->val+leftSum+rightSum});
+        currentMax = max(currentMax, sum);        
+        return max({node->val,leftSum+node->val, rightSum+node->val});  
+    }
+};
