@@ -1,0 +1,69 @@
+class Solution {
+    int dfs(int row, int col, vector<vector<int>>& grid, vector<vector<int>>& visited, int id) {
+        int n = grid.size();
+        int m = grid[0].size();
+        int area = 1;
+        visited[row][col] = id;
+        
+        int del_row[] = {-1, 0, 1, 0};
+        int del_col[] = {0, 1, 0, -1};
+        
+        for (int i = 0; i < 4; i++) {
+            int nr = row + del_row[i];
+            int nc = col + del_col[i];
+            
+            if (nr >= 0 && nr < n && nc >= 0 && nc < m && grid[nr][nc] == 1 && visited[nr][nc] == 0) {
+                area += dfs(nr, nc, grid, visited, id);
+            }
+        }
+        
+        return area;
+    }
+    
+public:
+    int largestIsland(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<int>> visited(n, vector<int>(m, 0));
+        int id = 2;
+        unordered_map<int, int> areaMap;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1 && visited[i][j] == 0) {
+                    int area = dfs(i, j, grid, visited, id);
+                    areaMap[id] = area;
+                    id++;
+                }
+            }
+        }
+        
+        int maxArea = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 0) {
+                    unordered_set<int> neighborIds;
+                    int area = 1;
+                    int del_row[] = {-1, 0, 1, 0};
+                    int del_col[] = {0, 1, 0, -1};
+                    
+                    for (int k = 0; k < 4; k++) {
+                        int nr = i + del_row[k];
+                        int nc = j + del_col[k];
+                        
+                        if (nr >= 0 && nr < n && nc >= 0 && nc < m && grid[nr][nc] != 0) {
+                            neighborIds.insert(visited[nr][nc]);
+                        }
+                    }
+                    
+                    for (int neighborId : neighborIds) {
+                        area += areaMap[neighborId];
+                    }
+                    
+                    maxArea = max(maxArea, area);
+                }
+            }
+        }
+        
+        return maxArea == 0 ? n * m : maxArea;
+    }
+};
