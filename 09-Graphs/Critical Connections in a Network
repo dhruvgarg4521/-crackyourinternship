@@ -1,0 +1,47 @@
+class Solution
+{
+private:
+    void DFS_TarjansAlgo(int node,int parent,vector<bool>& visited,vector<int> adj[],vector<int>& insertionTime,vector<int>& lowestTime,vector<vector<int>>& ans,int &timer)
+    {
+        visited[node] = true;
+        insertionTime[node] = lowestTime[node] = timer;
+        timer++;
+        for(auto nbr:adj[node])
+        {
+            if(nbr == parent) continue;
+            if(!visited[nbr])
+            {
+                DFS_TarjansAlgo(nbr,node,visited,adj,insertionTime,lowestTime,ans,timer);
+                lowestTime[node] = min(lowestTime[node],lowestTime[nbr]);
+                if(lowestTime[nbr] > insertionTime[node])
+                {
+                    ans.push_back({node,nbr});
+                }
+            }
+            else
+            {
+                lowestTime[node] = min(lowestTime[node],lowestTime[nbr]);
+            }
+        }
+    }
+
+public:
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections)
+    {
+        vector<int> adj[n];
+        for(auto edge:connections)
+        {
+            int u = edge[0];
+            int v = edge[1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        vector<int> insertionTime(n,-1);
+        vector<int> lowestTime(n,-1);
+        vector<bool> visited(n,false);
+        vector<vector<int>> ans;
+        int timer = 1;
+        DFS_TarjansAlgo(0,-1,visited,adj,insertionTime,lowestTime,ans,timer);
+        return ans;
+    }
+};
