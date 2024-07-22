@@ -1,0 +1,28 @@
+class Solution {
+  public:
+vector<string> v;
+void dfs(int i, int j,const string &s, vector<vector<int>> &mat, int n, vector<vector<int>> &vis) {
+    if (i < 0 || j < 0 || i >= n || j >= n) return;
+    if (mat[i][j] == 0 || vis[i][j] == 1) return;
+    if (i == n - 1 && j == n - 1) {
+        v.push_back(s);
+        return;
+    }
+    vis[i][j] = 1;
+    dfs(i - 1, j, s + 'U', mat, n, vis);
+    dfs(i + 1, j, s + 'D', mat, n, vis);
+    dfs(i, j - 1, s + 'L', mat, n, vis);
+    dfs(i, j + 1, s + 'R', mat, n, vis);
+    vis[i][j] = 0;
+}
+    vector<string> findPath(vector<vector<int>> &mat) {
+    v.clear();
+    int n = mat.size();
+    vector<vector<int>> vis(n, vector<int>(n, 0));
+    if (mat[0][0] == 0) return v;
+    if (mat[n - 1][n - 1] == 0) return v;
+    string s = "";
+    dfs(0, 0, s, mat, n, vis);
+    return v;
+    }
+};
