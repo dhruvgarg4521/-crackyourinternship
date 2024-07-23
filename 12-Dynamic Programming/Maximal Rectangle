@@ -1,0 +1,62 @@
+class Solution {
+public:
+    vector<int> getNSL(vector<int> &height, int n) {
+        stack<pair<int,int>> st;
+        vector<int> nsl(n, -1); // Initialize with -1 to represent no smaller element to the left
+        for(int i = 0; i < n; i++) {
+            while (!st.empty() && height[i] <= st.top().first) {
+                st.pop();
+            }
+            if (!st.empty()) {
+                nsl[i] = st.top().second;
+            }
+            st.push({height[i], i});
+        }
+        return nsl;
+    }
+    
+    vector<int> getNSR(vector<int> &height, int n) {
+        stack<pair<int,int>> st;
+        vector<int> nsr(n, n); // Initialize with n to represent no smaller element to the right
+        for(int i = n - 1; i >= 0; i--) {
+            while (!st.empty() && height[i] <= st.top().first) {
+                st.pop();
+            }
+            if (!st.empty()) {
+                nsr[i] = st.top().second;
+            }
+            st.push({height[i], i});
+        }
+        return nsr;
+    }
+    
+    int findmaxarea(vector<int> &height, int n) {
+        vector<int> nsl = getNSL(height, n);
+        vector<int> nsr = getNSR(height, n);
+        int maxi = 0;
+        for(int i = 0; i < n; i++) {
+            int width = nsr[i] - nsl[i] - 1;
+            int rect = height[i] * width;
+            maxi = max(maxi, rect);
+        }
+        return maxi;
+    }
+    
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        if (matrix.empty() || matrix[0].empty()) return 0; // Check for empty matrix
+        
+        int n = matrix.size();
+        int m = matrix[0].size();
+        vector<int> height(m, 0); // Initialize with 0s
+        
+        int maxarea = 0;
+        for(int row = 0; row < n; row++) {
+            for(int col = 0; col < m; col++) {
+                // Calculate height for each column
+                height[col] = (matrix[row][col] == '1') ? height[col] + 1 : 0;
+            }
+            maxarea = max(maxarea, findmaxarea(height, m));
+        }
+        return maxarea;
+    }
+};
